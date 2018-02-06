@@ -1,0 +1,17 @@
+#!/bin/sh
+# static-precompress
+# Compresses static web-assets with gzip and brotli for faster delivery.
+
+echo precompressing assets in $1
+cd "$1"
+
+FILETYPES="ico js css less sass html htm txt xml svg pdf vcf ics asc sig"
+
+PATTERN=".*\.("`echo "$FILETYPES" | tr ' ' '|'`")$"
+
+find -E ./ -type f -iregex ${PATTERN} | \
+        while read FILENAME ; do
+                gzip -k9f ${FILENAME}
+                brotli -kf -S .br ${FILENAME}
+        done
+# EOF
