@@ -24,7 +24,7 @@ ZOPFLICOMMAND=$(which zopfli)
 GZIPCOMMAND=$(which gzip)
 
 if [ -e "$ZOPFLICOMMAND" ] ; then
-    GZIPCOMPRESS="zopfli -v --i15 "
+    GZIPCOMPRESS="zopfli --i15 "
 elif [ -e "$GZIPCOMMAND" ] ; then
     GZIPCOMPRESS="gzip -k9f "
 else
