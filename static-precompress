@@ -9,9 +9,37 @@ FILETYPES="ico js css less sass html htm txt xml svg pdf vcf ics asc sig"
 
 PATTERN=".*\.("`echo "$FILETYPES" | tr ' ' '|'`")$"
 
+# Can we do brotli compression?
+BROTLICOMMAND=$(which brotli)
+if [ -e "$BROTLICOMMAND" ] ; then
+    BROTLICOMPRESS="brotli -kf -S .br ${FILENAME}"
+else
+    BROTLICOMPRESS=""
+fi
+
+echo BROTLICOMPRESS = $BROTLICOMPRESS
+
+# Can we do gzip compression with zopfli
+ZOPFLICOMMAND=$(which zopfli)
+GZIPCOMMAND=$(which gzip)
+
+if [ -e "$ZOPFLICOMMAND" ] ; then
+    GZIPCOMPRESS="zopfli -v --i15 "
+elif [ -e "$GZIPCOMMAND" ] ; then
+    GZIPCOMPRESS="gzip -k9f "
+else
+    GZIPCOMPRESS=""
+fi
+
+echo GZIPCOMPRESS = $GZIPCOMPRESS
+
 find -E ./ -type f -iregex ${PATTERN} | \
         while read FILENAME ; do
-                gzip -k9f ${FILENAME}
-                brotli -kf -S .br ${FILENAME}
+            if [ "$GZIPCOMPRESS" != "" ] ; then
+                $GZIPCOMPRESS "${FILENAME}"
+            fi
+            if [ "$BROTLICOMPRESS" != "" ] ; then
+                $BROTLICOMPRESS "${FILENAME}"
+            fi
         done
 # EOF
